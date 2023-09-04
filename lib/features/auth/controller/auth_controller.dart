@@ -1,4 +1,5 @@
-import 'package:appwrite/models.dart' as model;
+import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/apis/auth_api.dart';
@@ -18,8 +19,9 @@ final authControllerProvider =
 });
 
 final currentUserDetailsProvider = FutureProvider((ref) {
-  final currentUserId = ref.watch(currentUserAccountProvider).value!.$id;
-  final userDetails = ref.watch(userDetailsProvider(currentUserId));
+  final currentUser = ref.watch(currentUserAccountProvider).value;
+  final userDetails =
+      ref.watch(userDetailsProvider(currentUser!.$id.toString()));
   return userDetails.value;
 });
 
@@ -44,7 +46,7 @@ class AuthController extends StateNotifier<bool> {
         super(false);
   // state = isLoading
 
-  Future<model.Account?> currentUser() => _authAPI.currentUserAccount();
+  Future<User?> currentUser() => _authAPI.currentUserAccount();
 
   void signUp({
     required String email,
@@ -67,7 +69,7 @@ class AuthController extends StateNotifier<bool> {
           following: const [],
           profilePic: '',
           bannerPic: '',
-          uid: r.$id,
+          uid: r!.$id.toString(),
           bio: '',
           isTwitterBlue: false,
         );
